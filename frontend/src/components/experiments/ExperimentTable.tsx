@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Experiment } from "../../types/experiment";
 import { EmptyState } from "../common/EmptyState";
 import { ExperimentStatusBadge } from "./ExperimentStatusBadge";
@@ -30,7 +31,13 @@ export function ExperimentTable({
       <tbody>
         {experiments.map((experiment) => (
           <tr key={experiment.experimentId}>
-            <td>{experiment.name}</td>
+            <td>
+              <Link
+                to={`/experiments/${experiment.experimentId}`}
+              >
+                {experiment.name}
+              </Link>
+            </td>
 
             <td>
               <ExperimentStatusBadge status={experiment.status} />

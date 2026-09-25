@@ -48,5 +48,19 @@ http.get("/api/v1/workers/:workerId", ({ params }) => {
 
   return HttpResponse.json(worker);
 }),
+http.get("/api/v1/experiments/:experimentId", ({ params }) => {
+  const experiment = mockExperiments.find(
+    (item) => item.experimentId === params.experimentId,
+  );
+
+  if (!experiment) {
+    return HttpResponse.json(
+      { message: "Experiment not found" },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json(experiment);
+}),
 ];
 

@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router";
-
+import { ExperimentDetailPage } from "../pages/ExperimentDetailPage";
 import { AppLayout } from "../components/layout/AppLayout";
 import { ArtifactsPage } from "../pages/ArtifactsPage";
 import { DashboardPage } from "../pages/DashboardPage";
@@ -22,6 +22,10 @@ export function AppRouter() {
           element={<WorkerDetailPage />}
         />
         <Route path="/experiments" element={<ExperimentsPage />} />
+        <Route
+          path="/experiments/:experimentId"
+          element={<ExperimentDetailPage />}
+        />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/artifacts" element={<ArtifactsPage />} />
 
