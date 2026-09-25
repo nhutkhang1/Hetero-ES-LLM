@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -u
 
 PASS=0
@@ -14,6 +15,11 @@ fail() {
   FAIL=$((FAIL + 1))
 }
 
+echo "========================================"
+echo " HeteroES Frontend - Phase 3 Final Check"
+echo "========================================"
+echo
+
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 
 if [[ -z "$REPO_ROOT" ]]; then
@@ -22,12 +28,14 @@ if [[ -z "$REPO_ROOT" ]]; then
 fi
 
 FRONTEND="$REPO_ROOT/frontend"
-TYPES="$FRONTEND/src/types"
+CHECK_DIR="$REPO_ROOT/scripts/checks/frontend"
 
-echo "=== HeteroES Phase 3 - Domain Types Check ==="
-echo
+pass "Git repository found: $REPO_ROOT"
 
+# --------------------------------------------------
 # Branch
+# --------------------------------------------------
+
 BRANCH="$(git -C "$REPO_ROOT" branch --show-current)"
 
 if [[ "$BRANCH" == "feat/mock-coordinator" ]]; then
@@ -36,39 +44,88 @@ else
   fail "Expected feat/mock-coordinator, found: $BRANCH"
 fi
 
-# Required type files
-required_files=(
-  worker.ts
-  experiment.ts
-  generation.ts
-  candidate.ts
-  attempt.ts
-  event.ts
-  artifact.ts
-  metric.ts
-)
+# --------------------------------------------------
+# Phase 3 verification scripts
+# --------------------------------------------------
 
 echo
-echo "--- Domain type files ---"
+echo "--- Phase 3 sub-phase checks ---"
 
-for file in "${required_files[@]}"; do
-  if [[ -f "$TYPES/$file" ]]; then
-    pass "$file exists"
+checks=(
+  "check_phase3_domain_types.sh"
+  "check_phase3_mock_data.sh"
+  "check_phase3_mock_coordinator.sh"
+  "check_phase3_api_service.sh"
+  "check_phase3_query_hooks.sh"
+  "check_phase3_page_integration.sh"
+)
+
+for check in "${checks[@]}"; do
+  echo
+  echo ">>> Running $check"
+
+  if [[ ! -f "$CHECK_DIR/$check" ]]; then
+    fail "Missing verification script: $check"
+    continue
+  fi
+
+  if bash "$CHECK_DIR/$check"; then
+    pass "$check passed"
   else
-    fail "Missing: $file"
+    fail "$check failed"
   fi
 done
 
-# Detect accidental nested directory
-if [[ -d "$TYPES/src" ]]; then
-  fail "Unexpected nested directory: src/types/src"
-else
-  pass "No nested src/types/src directory"
-fi
+# --------------------------------------------------
+# Required Phase 3 directories
+# --------------------------------------------------
 
-# Dependencies
 echo
-echo "--- Phase 3 dependencies ---"
+echo "--- Phase 3 architecture ---"
+
+required_dirs=(
+  "src/types"
+  "src/mocks/data"
+  "src/api"
+  "src/hooks"
+)
+
+for dir in "${required_dirs[@]}"; do
+  if [[ -d "$FRONTEND/$dir" ]]; then
+    pass "$dir exists"
+  else
+    fail "Missing directory: $dir"
+  fi
+done
+
+# --------------------------------------------------
+# Critical files
+# --------------------------------------------------
+
+echo
+echo "--- Critical integration files ---"
+
+required_files=(
+  "src/app/providers.tsx"
+  "src/mocks/browser.ts"
+  "src/mocks/handlers.ts"
+  "public/mockServiceWorker.js"
+)
+
+for file in "${required_files[@]}"; do
+  if [[ -s "$FRONTEND/$file" ]]; then
+    pass "$file exists"
+  else
+    fail "Missing or empty: $file"
+  fi
+done
+
+# --------------------------------------------------
+# Dependency checks
+# --------------------------------------------------
+
+echo
+echo "--- Dependencies ---"
 
 if (
   cd "$FRONTEND" &&
@@ -88,35 +145,71 @@ else
   fail "msw missing"
 fi
 
-# Lint
-echo
-echo "--- Lint ---"
+# --------------------------------------------------
+# Final lint
+# --------------------------------------------------
 
-if (cd "$FRONTEND" && npm run lint); then
-  pass "Lint passed"
+echo
+echo "--- Final lint ---"
+
+if (
+  cd "$FRONTEND" &&
+  npm run lint -- --max-warnings=0
+); then
+  pass "Final lint passed"
 else
-  fail "Lint failed"
+  fail "Final lint failed"
 fi
 
-# Build
-echo
-echo "--- Build ---"
+# --------------------------------------------------
+# Final production build
+# --------------------------------------------------
 
-if (cd "$FRONTEND" && npm run build); then
-  pass "Production build passed"
+echo
+echo "--- Final production build ---"
+
+if (
+  cd "$FRONTEND" &&
+  npm run build
+); then
+  pass "Final production build passed"
 else
-  fail "Production build failed"
+  fail "Final production build failed"
 fi
 
+# --------------------------------------------------
+# Git status
+# --------------------------------------------------
+
 echo
-echo "=== Summary ==="
+echo "--- Git status ---"
+
+git -C "$REPO_ROOT" status --short
+
+# --------------------------------------------------
+# Summary
+# --------------------------------------------------
+
+echo
+echo "========================================"
+echo " Phase 3 Summary"
+echo "========================================"
 echo "PASS: $PASS"
 echo "FAIL: $FAIL"
 
 if [[ "$FAIL" -eq 0 ]]; then
-  echo "Phase 3 domain type checks passed."
+  echo
+  echo "Phase 3 automated verification PASSED."
+  echo
+  echo "Manual browser verification:"
+  echo "  1. Start: cd frontend && npm run dev"
+  echo "  2. Open /workers"
+  echo "  3. Open /experiments"
+  echo "  4. Confirm MSW requests return HTTP 200"
+  echo "  5. Confirm worker, experiment, generation and candidate data render"
   exit 0
 else
-  echo "Phase 3 domain type checks failed."
+  echo
+  echo "Phase 3 verification FAILED."
   exit 1
 fi
