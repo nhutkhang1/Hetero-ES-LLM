@@ -2,7 +2,9 @@ import { useParams } from "react-router";
 import { ErrorState } from "../components/common/ErrorState";
 import { LoadingState } from "../components/common/LoadingState";
 import { ExperimentStatusBadge } from "../components/experiments/ExperimentStatusBadge";
+import { GenerationTable } from "../components/generations/GenerationTable";
 import { useExperiment } from "../hooks/useExperiment";
+import { useGenerations } from "../hooks/useGenerations";
 
 export function ExperimentDetailPage() {
   const { experimentId = "" } = useParams();
@@ -14,10 +16,15 @@ export function ExperimentDetailPage() {
     error,
   } = useExperiment(experimentId);
 
+  const {
+    data: generations,
+    isPending: generationsPending,
+    isError: generationsError,
+    error: generationsErrorData,
+  } = useGenerations(experimentId);
+
   if (isPending) {
-    return (
-      <LoadingState message="Loading experiment..." />
-    );
+    return <LoadingState message="Loading experiment..." />;
   }
 
   if (isError) {
@@ -43,7 +50,8 @@ export function ExperimentDetailPage() {
       </div>
 
       <div>
-        <strong>Model:</strong> {experiment.modelName}
+        <strong>Model:</strong>{" "}
+        {experiment.modelName}
       </div>
 
       <div>
@@ -80,6 +88,26 @@ export function ExperimentDetailPage() {
         <strong>Completed At:</strong>{" "}
         {experiment.completedAt ?? "N/A"}
       </div>
+
+      <hr />
+
+      <section>
+        <h3>Generations</h3>
+
+        {generationsPending && (
+          <LoadingState message="Loading generations..." />
+        )}
+
+        {generationsError && (
+          <ErrorState
+            message={`Failed to load generations: ${generationsErrorData.message}`}
+          />
+        )}
+
+        {generations && (
+          <GenerationTable generations={generations} />
+        )}
+      </section>
     </section>
   );
 }
