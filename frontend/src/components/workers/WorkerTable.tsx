@@ -2,6 +2,7 @@ import type { Worker } from "../../types/worker";
 import { AdmissionBadge } from "./AdmissionBadge";
 import { WorkerStatusBadge } from "./WorkerStatusBadge";
 import { Link } from "react-router";
+import { EmptyState } from "../common/EmptyState";
 
 interface WorkerTableProps {
   workers: Worker[];
@@ -11,7 +12,7 @@ export function WorkerTable({
   workers,
 }: WorkerTableProps) {
   if (workers.length === 0) {
-    return <p>No workers available.</p>;
+    return <EmptyState message="No workers available." />;
   }
 
   return (

@@ -2,6 +2,8 @@ import { useParams } from "react-router";
 import { AdmissionBadge } from "../components/workers/AdmissionBadge";
 import { WorkerStatusBadge } from "../components/workers/WorkerStatusBadge";
 import { useWorker } from "../hooks/useWorker";
+import { ErrorState } from "../components/common/ErrorState";
+import { LoadingState } from "../components/common/LoadingState";
 
 export function WorkerDetailPage() {
   const { workerId = "" } = useParams();
@@ -14,11 +16,15 @@ export function WorkerDetailPage() {
   } = useWorker(workerId);
 
   if (isPending) {
-    return <p>Loading worker...</p>;
+    return <LoadingState message="Loading worker..." />;
   }
 
   if (isError) {
-    return <p>Failed to load worker: {error.message}</p>;
+      return (
+        <ErrorState
+          message={`Failed to load worker: ${error.message}`}
+        />
+      );
   }
 
   return (

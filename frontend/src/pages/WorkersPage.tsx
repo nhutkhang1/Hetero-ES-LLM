@@ -1,6 +1,8 @@
 import { ClusterSummary } from "../components/workers/ClusterSummary";
 import { WorkerTable } from "../components/workers/WorkerTable";
 import { useWorkers } from "../hooks/useWorkers";
+import { LoadingState } from "../components/common/LoadingState";
+import { ErrorState } from "../components/common/ErrorState";
 
 export function WorkersPage() {
   const {
@@ -11,11 +13,15 @@ export function WorkersPage() {
   } = useWorkers();
 
   if (isPending) {
-    return <p>Loading workers...</p>;
+    return <LoadingState message="Loading workers..." />;
   }
 
   if (isError) {
-    return <p>Failed to load workers: {error.message}</p>;
+      return (
+        <ErrorState
+          message={`Failed to load workers: ${error.message}`}
+        />
+      );
   }
 
   return (
