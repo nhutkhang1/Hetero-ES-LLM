@@ -57,11 +57,11 @@ build/
 
 # HeteroES runtime data
 
-data/
-artifacts/
-checkpoints/
-logs/
-runs/
+/data/
+/artifacts/
+/checkpoints/
+/logs/
+/runs/
 
 *.db
 *.db-shm
