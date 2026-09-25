@@ -1,6 +1,7 @@
 import type { Worker } from "../../types/worker";
 import { AdmissionBadge } from "./AdmissionBadge";
 import { WorkerStatusBadge } from "./WorkerStatusBadge";
+import { Link } from "react-router";
 
 interface WorkerTableProps {
   workers: Worker[];
@@ -31,7 +32,12 @@ export function WorkerTable({
       <tbody>
         {workers.map((worker) => (
           <tr key={worker.workerId}>
-            <td>{worker.workerId}</td>
+
+            <td>
+              <Link to={`/workers/${worker.workerId}`}>
+                {worker.workerId}
+              </Link>
+            </td>
 
             <td>{worker.profile.gpuName}</td>
 

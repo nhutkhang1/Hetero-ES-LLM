@@ -7,6 +7,7 @@ import { EventsPage } from "../pages/EventsPage";
 import { ExperimentsPage } from "../pages/ExperimentsPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { WorkersPage } from "../pages/WorkersPage";
+import { WorkerDetailPage } from "../pages/WorkerDetailPage";
 
 export function AppRouter() {
   return (
@@ -16,6 +17,10 @@ export function AppRouter() {
 
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/workers" element={<WorkersPage />} />
+        <Route
+          path="/workers/:workerId"
+          element={<WorkerDetailPage />}
+        />
         <Route path="/experiments" element={<ExperimentsPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/artifacts" element={<ArtifactsPage />} />
