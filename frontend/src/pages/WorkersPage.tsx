@@ -1,4 +1,8 @@
+import { ClusterSummary } from "../components/workers/ClusterSummary";
+import { WorkerTable } from "../components/workers/WorkerTable";
 import { useWorkers } from "../hooks/useWorkers";
+import { LoadingState } from "../components/common/LoadingState";
+import { ErrorState } from "../components/common/ErrorState";
 
 export function WorkersPage() {
   const {
@@ -9,52 +13,24 @@ export function WorkersPage() {
   } = useWorkers();
 
   if (isPending) {
-    return <p>Loading workers...</p>;
+    return <LoadingState message="Loading workers..." />;
   }
 
   if (isError) {
-    return <p>Failed to load workers: {error.message}</p>;
+      return (
+        <ErrorState
+          message={`Failed to load workers: ${error.message}`}
+        />
+      );
   }
 
   return (
     <section>
       <h2>Workers</h2>
 
-      {workers.length === 0 ? (
-        <p>No workers available.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Worker</th>
-              <th>GPU</th>
-              <th>Status</th>
-              <th>Admission</th>
-              <th>VRAM</th>
-              <th>Throughput</th>
-            </tr>
-          </thead>
+      <ClusterSummary workers={workers} />
 
-          <tbody>
-            {workers.map((worker) => (
-              <tr key={worker.workerId}>
-                <td>{worker.workerId}</td>
-                <td>{worker.profile.gpuName}</td>
-                <td>{worker.status}</td>
-                <td>{worker.admissionStatus}</td>
-
-                <td>
-                  {worker.profile.vramTotalMb} MB
-                </td>
-
-                <td>
-                  {worker.profile.throughputTokensPerSecond ?? "N/A"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <WorkerTable workers={workers} />
     </section>
   );
 }

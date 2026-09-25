@@ -1,5 +1,4 @@
 import { http, HttpResponse } from "msw";
-
 import { mockCandidates } from "./data/candidates";
 import { mockExperiments } from "./data/experiments";
 import { mockGenerations } from "./data/generations";
@@ -35,4 +34,19 @@ export const handlers = [
       return HttpResponse.json(candidates);
     },
   ),
+http.get("/api/v1/workers/:workerId", ({ params }) => {
+  const worker = mockWorkers.find(
+    (item) => item.workerId === params.workerId,
+  );
+
+  if (!worker) {
+    return HttpResponse.json(
+      { message: "Worker not found" },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json(worker);
+}),
 ];
+
