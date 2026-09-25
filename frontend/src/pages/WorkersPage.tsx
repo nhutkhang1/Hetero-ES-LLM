@@ -1,3 +1,4 @@
+import { ClusterSummary } from "../components/workers/ClusterSummary";
 import { useWorkers } from "../hooks/useWorkers";
 
 export function WorkersPage() {
@@ -19,6 +20,8 @@ export function WorkersPage() {
   return (
     <section>
       <h2>Workers</h2>
+
+      <ClusterSummary workers={workers} />
 
       {workers.length === 0 ? (
         <p>No workers available.</p>
@@ -42,11 +45,7 @@ export function WorkersPage() {
                 <td>{worker.profile.gpuName}</td>
                 <td>{worker.status}</td>
                 <td>{worker.admissionStatus}</td>
-
-                <td>
-                  {worker.profile.vramTotalMb} MB
-                </td>
-
+                <td>{worker.profile.vramTotalMb} MB</td>
                 <td>
                   {worker.profile.throughputTokensPerSecond ?? "N/A"}
                 </td>
