@@ -8,6 +8,7 @@ import { ExperimentsPage } from "../pages/ExperimentsPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { WorkersPage } from "../pages/WorkersPage";
 import { WorkerDetailPage } from "../pages/WorkerDetailPage";
+import { GenerationDetailPage } from "../pages/GenerationDetailPage";
 
 export function AppRouter() {
   return (
@@ -25,6 +26,10 @@ export function AppRouter() {
         <Route
           path="/experiments/:experimentId"
           element={<ExperimentDetailPage />}
+        />
+        <Route
+          path="/experiments/:experimentId/generations/:generationId"
+          element={<GenerationDetailPage />}
         />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/artifacts" element={<ArtifactsPage />} />

@@ -2,6 +2,7 @@ import type { Generation } from "../../types/generation";
 import { EmptyState } from "../common/EmptyState";
 import { GenerationProgress } from "./GenerationProgress";
 import { GenerationStatusBadge } from "./GenerationStatusBadge";
+import { Link } from "react-router";
 
 interface GenerationTableProps {
   generations: Generation[];
@@ -30,7 +31,13 @@ export function GenerationTable({
       <tbody>
         {generations.map((generation) => (
           <tr key={generation.generationId}>
-            <td>{generation.generationId}</td>
+            <td>
+              <Link
+                to={`/experiments/${generation.experimentId}/generations/${generation.generationId}`}
+              >
+                {generation.generationId}
+              </Link>
+            </td>
 
             <td>
               <GenerationStatusBadge status={generation.status} />

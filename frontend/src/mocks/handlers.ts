@@ -62,5 +62,24 @@ http.get("/api/v1/experiments/:experimentId", ({ params }) => {
 
   return HttpResponse.json(experiment);
 }),
+http.get(
+  "/api/v1/experiments/:experimentId/generations/:generationId",
+  ({ params }) => {
+    const generation = mockGenerations.find(
+      (item) =>
+        item.experimentId === params.experimentId &&
+        item.generationId === params.generationId,
+    );
+
+    if (!generation) {
+      return HttpResponse.json(
+        { message: "Generation not found" },
+        { status: 404 },
+      );
+    }
+
+    return HttpResponse.json(generation);
+  },
+),
 ];
 
