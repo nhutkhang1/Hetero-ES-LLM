@@ -8,6 +8,7 @@ import { ExperimentsPage } from "../pages/ExperimentsPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { WorkersPage } from "../pages/WorkersPage";
 import { WorkerDetailPage } from "../pages/WorkerDetailPage";
+import { CandidateDetailPage } from "../pages/CandidateDetailPage";
 import { GenerationDetailPage } from "../pages/GenerationDetailPage";
 
 export function AppRouter() {
@@ -26,6 +27,10 @@ export function AppRouter() {
         <Route
           path="/experiments/:experimentId"
           element={<ExperimentDetailPage />}
+        />
+        <Route
+          path="/experiments/:experimentId/generations/:generationId/candidates/:candidateId"
+          element={<CandidateDetailPage />}
         />
         <Route
           path="/experiments/:experimentId/generations/:generationId"

@@ -1,6 +1,7 @@
 import type { Candidate } from "../../types/candidate";
 import { EmptyState } from "../common/EmptyState";
 import { CandidateStatusBadge } from "./CandidateStatusBadge";
+import { Link } from "react-router";
 
 interface CandidateTableProps {
   candidates: Candidate[];
@@ -30,7 +31,13 @@ export function CandidateTable({
       <tbody>
         {candidates.map((candidate) => (
           <tr key={candidate.candidateId}>
-            <td>{candidate.candidateId}</td>
+            <td>
+              <Link
+                to={`/experiments/${candidate.experimentId}/generations/${candidate.generationId}/candidates/${candidate.candidateId}`}
+              >
+                {candidate.candidateId}
+              </Link>
+            </td>
 
             <td>
               <CandidateStatusBadge status={candidate.status} />

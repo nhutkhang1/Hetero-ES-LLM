@@ -8,3 +8,11 @@ export function getCandidates(
     `/api/v1/generations/${generationId}/candidates`,
   );
 }
+
+export function getCandidate(
+  candidateId: string,
+): Promise<Candidate> {
+  return apiGet<Candidate>(
+    `/api/v1/candidates/${candidateId}`,
+  );
+}
