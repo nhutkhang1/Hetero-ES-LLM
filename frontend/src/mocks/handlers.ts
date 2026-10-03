@@ -3,6 +3,7 @@ import { mockCandidates } from "./data/candidates";
 import { mockExperiments } from "./data/experiments";
 import { mockGenerations } from "./data/generations";
 import { mockWorkers } from "./data/workers";
+import { mockAttempts } from "./data/attempts";
 
 export const handlers = [
   http.get("/api/v1/workers", () => {
@@ -48,5 +49,66 @@ http.get("/api/v1/workers/:workerId", ({ params }) => {
 
   return HttpResponse.json(worker);
 }),
+http.get("/api/v1/experiments/:experimentId", ({ params }) => {
+  const experiment = mockExperiments.find(
+    (item) => item.experimentId === params.experimentId,
+  );
+
+  if (!experiment) {
+    return HttpResponse.json(
+      { message: "Experiment not found" },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json(experiment);
+}),
+http.get("/api/v1/candidates/:candidateId", ({ params }) => {
+  const candidate = mockCandidates.find(
+    (item) => item.candidateId === params.candidateId,
+  );
+
+  if (!candidate) {
+    return HttpResponse.json(
+      { message: "Candidate not found" },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json(candidate);
+}),
+http.get("/api/v1/attempts/:attemptId", ({ params }) => {
+  const attempt = mockAttempts.find(
+    (item) => item.attemptId === params.attemptId,
+  );
+
+  if (!attempt) {
+    return HttpResponse.json(
+      { message: "Attempt not found" },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json(attempt);
+}),
+http.get(
+  "/api/v1/experiments/:experimentId/generations/:generationId",
+  ({ params }) => {
+    const generation = mockGenerations.find(
+      (item) =>
+        item.experimentId === params.experimentId &&
+        item.generationId === params.generationId,
+    );
+
+    if (!generation) {
+      return HttpResponse.json(
+        { message: "Generation not found" },
+        { status: 404 },
+      );
+    }
+
+    return HttpResponse.json(generation);
+  },
+),
 ];
 

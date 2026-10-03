@@ -1,34 +1,26 @@
-import { useCandidates } from "../hooks/useCandidates";
+import { ErrorState } from "../components/common/ErrorState";
+import { LoadingState } from "../components/common/LoadingState";
+import { ExperimentSummary } from "../components/experiments/ExperimentSummary";
+import { ExperimentTable } from "../components/experiments/ExperimentTable";
 import { useExperiments } from "../hooks/useExperiments";
-import { useGenerations } from "../hooks/useGenerations";
 
 export function ExperimentsPage() {
-  const experimentsQuery = useExperiments();
+  const {
+    data: experiments,
+    isPending,
+    isError,
+    error,
+  } = useExperiments();
 
-  const experimentId =
-    experimentsQuery.data?.[0]?.experimentId ?? "";
-
-  const generationsQuery = useGenerations(experimentId);
-
-  const generationId =
-    generationsQuery.data?.find(
-      (generation) => generation.status === "RUNNING",
-    )?.generationId ??
-    generationsQuery.data?.[0]?.generationId ??
-    "";
-
-  const candidatesQuery = useCandidates(generationId);
-
-  if (experimentsQuery.isPending) {
-    return <p>Loading experiments...</p>;
+  if (isPending) {
+    return <LoadingState message="Loading experiments..." />;
   }
 
-  if (experimentsQuery.isError) {
+  if (isError) {
     return (
-      <p>
-        Failed to load experiments:{" "}
-        {experimentsQuery.error.message}
-      </p>
+      <ErrorState
+        message={`Failed to load experiments: ${error.message}`}
+      />
     );
   }
 
@@ -36,88 +28,9 @@ export function ExperimentsPage() {
     <section>
       <h2>Experiments</h2>
 
-      <h3>Experiments</h3>
+      <ExperimentSummary experiments={experiments} />
 
-      {experimentsQuery.data.length === 0 ? (
-        <p>No experiments available.</p>
-      ) : (
-        <ul>
-          {experimentsQuery.data.map((experiment) => (
-            <li key={experiment.experimentId}>
-              <strong>{experiment.name}</strong>
-              {" — "}
-              {experiment.status}
-              {" — "}
-              {experiment.modelName}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <h3>Generations</h3>
-
-      {generationsQuery.isPending && experimentId && (
-        <p>Loading generations...</p>
-      )}
-
-      {generationsQuery.isError && (
-        <p>
-          Failed to load generations:{" "}
-          {generationsQuery.error.message}
-        </p>
-      )}
-
-      {generationsQuery.data && (
-        <ul>
-          {generationsQuery.data.map((generation) => (
-            <li key={generation.generationId}>
-              {generation.generationId}
-              {" — "}
-              {generation.status}
-              {" — "}
-              {generation.committedCandidateCount}/
-              {generation.candidateCount} committed
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <h3>Candidates</h3>
-
-      {candidatesQuery.isPending && generationId && (
-        <p>Loading candidates...</p>
-      )}
-
-      {candidatesQuery.isError && (
-        <p>
-          Failed to load candidates:{" "}
-          {candidatesQuery.error.message}
-        </p>
-      )}
-
-      {candidatesQuery.data && (
-        <table>
-          <thead>
-            <tr>
-              <th>Candidate</th>
-              <th>Attempt</th>
-              <th>Worker</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {candidatesQuery.data.map((candidate) => (
-              <tr key={candidate.candidateId}>
-                <td>{candidate.candidateId}</td>
-                <td>{candidate.attemptId}</td>
-                <td>{candidate.workerId ?? "-"}</td>
-                <td>{candidate.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <ExperimentTable experiments={experiments} />
     </section>
   );
 }

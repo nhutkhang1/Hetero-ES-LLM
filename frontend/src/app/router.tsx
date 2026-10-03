@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router";
-
+import { ExperimentDetailPage } from "../pages/ExperimentDetailPage";
 import { AppLayout } from "../components/layout/AppLayout";
 import { ArtifactsPage } from "../pages/ArtifactsPage";
 import { DashboardPage } from "../pages/DashboardPage";
@@ -8,6 +8,8 @@ import { ExperimentsPage } from "../pages/ExperimentsPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { WorkersPage } from "../pages/WorkersPage";
 import { WorkerDetailPage } from "../pages/WorkerDetailPage";
+import { CandidateDetailPage } from "../pages/CandidateDetailPage";
+import { GenerationDetailPage } from "../pages/GenerationDetailPage";
 
 export function AppRouter() {
   return (
@@ -22,6 +24,18 @@ export function AppRouter() {
           element={<WorkerDetailPage />}
         />
         <Route path="/experiments" element={<ExperimentsPage />} />
+        <Route
+          path="/experiments/:experimentId"
+          element={<ExperimentDetailPage />}
+        />
+        <Route
+          path="/experiments/:experimentId/generations/:generationId/candidates/:candidateId"
+          element={<CandidateDetailPage />}
+        />
+        <Route
+          path="/experiments/:experimentId/generations/:generationId"
+          element={<GenerationDetailPage />}
+        />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/artifacts" element={<ArtifactsPage />} />
 
